@@ -536,17 +536,31 @@ updates:
 
 ### 📊 실제 파이프라인 검증 결과
 
-이 레포지토리에서 실제로 파이프라인을 실행한 결과입니다:
+이 레포지토리에서 실제로 파이프라인을 실행한 결과입니다 (Public 리포 전환 후):
 
 | Job | 상태 | 설명 |
 |-----|------|------|
+| 🔍 Code Scanning (CodeQL) | ✅ 성공 | `vulnerable-sample.js`의 취약점 탐지 완료, SARIF 결과 GitHub Security 탭에 업로드 성공 |
 | 🔑 Secret Scanning Check | ✅ 성공 | 시크릿 알림 없음 확인 |
-| 🔍 Code Scanning (CodeQL) | ⚠️ 분석 성공, 업로드 실패 | CodeQL 분석 자체는 정상 동작하여 `vulnerable-sample.js`의 취약점 탐지 완료. 단, **GHAS 미활성 리포**에서는 SARIF 결과 업로드 시 `Advanced Security must be enabled` 에러 발생 |
 | 📦 Dependency Review | ⏭️ Skipped | `push` 이벤트에서는 정상적으로 건너뜀 (PR에서만 동작) |
 | 📊 Security Report | ✅ 성공 | 보안 요약 리포트 정상 생성 |
 
-> 💡 **포인트:** CodeQL 분석 엔진은 GHAS 없이도 로컬/CI에서 실행 가능하지만, GitHub UI에서 결과를 보려면(Security 탭, PR 코멘트, Copilot Autofix) **반드시 GHAS 라이선스가 필요**합니다.  
-> Public 리포지토리에서는 GHAS가 무료로 제공되므로, 교육 실습 시 **Public 리포로 전환**하면 전체 플로우를 체험할 수 있습니다.
+> 💡 **확인 방법:** GitHub 리포지토리 → **Security** 탭 → **Code scanning alerts**에서 CodeQL이 탐지한 취약점 목록을 확인할 수 있습니다.  
+> 🔗 [Security 탭 바로가기](https://github.com/Ai-Advanced/GitHub_and_Copilot/security)
+
+> ⚠️ **참고:** 이전에 Internal(Private) 리포 상태에서 실행했을 때는 CodeQL 분석은 성공했지만 `Advanced Security must be enabled` 에러로 결과 업로드가 실패했습니다. **Public 리포로 전환 후 모든 Job이 정상 동작**합니다.
+
+### 🔍 CodeQL 탐지 결과 (실제 알림)
+
+`vulnerable-sample.js`에서 다음 취약점이 탐지되어 **Security → Code scanning alerts**에 표시됩니다:
+
+| # | 취약점 | CWE | 심각도 |
+|---|--------|-----|--------|
+| 1 | **Reflected XSS** (`js/reflected-xss`) | CWE-79 | 🔴 High |
+| 2 | **SQL Injection** (`js/sql-injection`) | CWE-89 | 🔴 High |
+| 3-4 | **Missing Rate Limiting** (`js/missing-rate-limiting`) | CWE-770 | 🔴 High |
+
+> 🎯 교육 시 이 알림들을 클릭하여 **Copilot Autofix**가 제안하는 수정 코드를 시연할 수 있습니다.
 
 ---
 
