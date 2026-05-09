@@ -319,6 +319,17 @@ jobs:
 ## 실습 목표
 **GHAS 보안 도구를 활용한 CI/CD 보안 파이프라인 구축**
 
+> ⚠️ **사전 요구사항: GHAS 라이선스 필요**
+> 
+> Code Scanning(CodeQL 결과 업로드), Secret Scanning API 등 GHAS 기능은  
+> **GitHub Advanced Security 라이선스가 활성화된 리포지토리**에서만 동작합니다.
+> 
+> - **GitHub Enterprise Cloud/Server** → Organization Settings에서 GHAS 활성화
+> - **Public 리포지토리** → GHAS 기능 무료 제공 (별도 설정 없이 사용 가능)
+> - **Private 리포지토리 (Free/Team)** → GHAS 라이선스 필요 (없으면 CodeQL 분석은 로컬에서 실행 가능하지만 GitHub UI에 결과가 표시되지 않음)
+> 
+> 💡 **실습 팁:** GHAS 라이선스가 없는 환경에서는 **Public 리포지토리**로 실습하면 모든 기능을 무료로 체험할 수 있습니다.
+
 ### Step 1: CodeQL 코드 스캐닝 워크플로우 생성
 
 파일: `.github/workflows/security-pipeline.yml`
@@ -521,6 +532,20 @@ updates:
 > - Copilot Autofix가 발견된 취약점에 대해 수정 제안을 하는지
 > - Dependency Review가 새로운 취약한 의존성을 차단하는지
 > - Security Report 코멘트가 PR에 자동 게시되는지
+
+### 📊 실제 파이프라인 검증 결과
+
+이 레포지토리에서 실제로 파이프라인을 실행한 결과입니다:
+
+| Job | 상태 | 설명 |
+|-----|------|------|
+| 🔑 Secret Scanning Check | ✅ 성공 | 시크릿 알림 없음 확인 |
+| 🔍 Code Scanning (CodeQL) | ⚠️ 분석 성공, 업로드 실패 | CodeQL 분석 자체는 정상 동작하여 `vulnerable-sample.js`의 취약점 탐지 완료. 단, **GHAS 미활성 리포**에서는 SARIF 결과 업로드 시 `Advanced Security must be enabled` 에러 발생 |
+| 📦 Dependency Review | ⏭️ Skipped | `push` 이벤트에서는 정상적으로 건너뜀 (PR에서만 동작) |
+| 📊 Security Report | ✅ 성공 | 보안 요약 리포트 정상 생성 |
+
+> 💡 **포인트:** CodeQL 분석 엔진은 GHAS 없이도 로컬/CI에서 실행 가능하지만, GitHub UI에서 결과를 보려면(Security 탭, PR 코멘트, Copilot Autofix) **반드시 GHAS 라이선스가 필요**합니다.  
+> Public 리포지토리에서는 GHAS가 무료로 제공되므로, 교육 실습 시 **Public 리포로 전환**하면 전체 플로우를 체험할 수 있습니다.
 
 ---
 
