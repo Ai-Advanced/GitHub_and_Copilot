@@ -1,9 +1,9 @@
-# 🔐 GHAS + Copilot 보안 심화 교육
+# 📌 Chapter 3. GHE + GHAS 보안 심화 교육
 
-> **Part 4 확장판** — GHAS 보안 파이프라인 구축, Security Overview 대시보드, Copilot Autofix, 보안 자동화  
-> **예상 소요:** 15~20분 (데모 + 실습 포함)  
+> **소요 시간:** 20~25분 (이론 + 실습 포함)  
+> **학습 목표:** GitHub Enterprise와 GHAS를 이해하고, 보안 자동화 파이프라인을 직접 구축합니다.  
 > **대상:** 보안 관리자, DevSecOps 엔지니어, 테크 리드  
-> **사전 준비:** GitHub Enterprise Cloud 또는 GHAS 라이선스가 적용된 조직
+> **이전 단계:** [Chapter 2 — Custom Agent 심화](./ch02_Custom_Agent_심화교육.md) | **다음 단계:** [Chapter 4 — Agent 성능 비교](./ch04_Agent_성능비교_보고서.md)
 
 ---
 
@@ -11,16 +11,111 @@
 
 | 순서 | 주제 | 시간 |
 |------|------|------|
-| 4.1 | GHAS 보안 파이프라인 전체 아키텍처 | 3분 |
-| 4.2 | Code Scanning + Copilot Autofix 심화 | 4분 |
-| 4.3 | Secret Scanning + Push Protection 심화 | 3분 |
-| 4.4 | Dependabot 자동화 파이프라인 구축 | 3분 |
-| 4.5 | 🔧 실습: 보안 자동화 파이프라인 구축 | 5분 |
-| 4.6 | Security Overview 대시보드 활용 | 3분 |
+| 4.1 | GitHub Enterprise (GHE) 개요 | 2분 |
+| 4.2 | GHAS (GitHub Advanced Security) 개요 | 3분 |
+| 4.3 | GHAS + Copilot 시너지 | 2분 |
+| 4.4 | GHAS 보안 파이프라인 전체 아키텍처 | 3분 |
+| 4.5 | Code Scanning + Copilot Autofix 심화 | 4분 |
+| 4.6 | Secret Scanning + Push Protection 심화 | 3분 |
+| 4.7 | Dependabot 자동화 파이프라인 구축 | 3분 |
+| 4.8 | 🔧 실습: 보안 자동화 파이프라인 구축 | 5분 |
+| 4.9 | Security Overview 대시보드 활용 | 3분 |
 
 ---
 
-# 4.1 GHAS 보안 파이프라인 전체 아키텍처 (3분)
+## 4.1 GitHub Enterprise (GHE) 개요
+
+GitHub Enterprise는 기업 환경에 최적화된 GitHub 플랫폼입니다.
+
+### GHE Cloud vs GHE Server
+
+| 항목 | GHE Cloud | GHE Server |
+|------|-----------|------------|
+| **호스팅** | GitHub 관리 (SaaS) | 자체 인프라 (On-premise) |
+| **업데이트** | 자동 | 수동 |
+| **규정 준수** | SOC 1/2, FedRAMP 등 | 자체 보안 정책 |
+| **데이터 주권** | GitHub 인프라 | 자사 데이터센터 |
+| **GHAS** | ✅ 포함 | ✅ 별도 라이선스 |
+
+### GHE 핵심 기능
+- **SAML SSO / SCIM** — 기업 ID 관리 통합
+- **감사 로그** — 모든 활동 추적/감사
+- **IP 허용 목록** — 네트워크 수준 접근 제어
+- **리포지토리 정책** — 조직 전체 브랜치 보호, 리뷰 정책
+- **내부 리포지토리** — InnerSource를 위한 사내 공개 리포지토리
+
+## 4.2 GHAS (GitHub Advanced Security) 개요
+
+GHAS는 **소프트웨어 공급망 전체를 보호**하는 통합 보안 솔루션입니다.
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    GHAS 보안 체계                        │
+├──────────────┬──────────────┬───────────────────────────┤
+│  Code        │  Secret      │  Supply Chain             │
+│  Scanning    │  Scanning    │  Security                 │
+│              │              │                           │
+│ • CodeQL     │ • 200+ 패턴   │ • Dependabot Alerts      │
+│ • 자동 수정   │ • Push 보호   │ • Dependabot Updates     │
+│ • PR 통합    │ • 커스텀 패턴  │ • Dependency Review      │
+│ • SARIF 지원 │ • 파트너 연동  │ • SBOM 생성              │
+└──────────────┴──────────────┴───────────────────────────┘
+```
+
+### 🔍 Code Scanning (코드 스캐닝)
+- **CodeQL** 엔진으로 코드의 보안 취약점 자동 탐지
+- SQL Injection, XSS, Path Traversal 등 탐지
+- PR에서 직접 결과 확인 및 **Copilot Autofix**로 자동 수정 제안
+- 지원 언어: JavaScript, TypeScript, Python, Java, C/C++, Go, Ruby, C#, Swift, Kotlin
+
+### 🔑 Secret Scanning (시크릿 스캐닝)
+- 코드에 노출된 API 키, 토큰, 비밀번호 등 자동 탐지
+- **Push Protection**: 시크릿이 포함된 커밋을 **push 단계에서 차단**
+- **200개+ 파트너 패턴** (AWS, Azure, GCP, Slack 등)
+- 커스텀 정규식 패턴으로 사내 시크릿 형식도 탐지 가능
+
+### 📦 Dependabot (의존성 보안)
+- 알려진 취약점이 있는 의존성 자동 탐지 & 알림
+- 보안 업데이트 PR 자동 생성
+- 버전 업데이트 PR 자동 생성
+- 다양한 생태계 지원: npm, Maven, pip, NuGet, Go, Rust 등
+
+## 4.3 GHAS + Copilot 시너지 🤝
+
+```
+         개발자가 코드 작성
+               │
+    ┌──────────▼──────────┐
+    │   Copilot이 보안     │
+    │   베스트 프랙티스로   │
+    │   코드 생성          │
+    └──────────┬──────────┘
+               │
+    ┌──────────▼──────────┐
+    │   Push Protection    │ ← 시크릿 포함 시 push 차단
+    └──────────┬──────────┘
+               │
+    ┌──────────▼──────────┐
+    │   Code Scanning      │ ← PR에서 취약점 자동 탐지
+    │   + Copilot Autofix  │ ← AI가 수정 코드 자동 제안
+    └──────────┬──────────┘
+               │
+    ┌──────────▼──────────┐
+    │   Dependabot         │ ← 취약한 의존성 자동 업데이트
+    └──────────┬──────────┘
+               │
+    ┌──────────▼──────────┐
+    │   Security Overview  │ ← 조직 전체 보안 현황 대시보드
+    └──────────┴──────────┘
+```
+
+> 💡 **핵심 메시지:** Copilot이 안전한 코드를 작성하고, GHAS가 놓친 부분을 잡아내는 **이중 보안 체계**
+
+---
+
+---
+
+# 4.4 GHAS 보안 파이프라인 전체 아키텍처 (3분)
 
 ## 개발 라이프사이클 전체를 커버하는 보안 체계
 
@@ -64,7 +159,7 @@
 
 ---
 
-# 4.2 Code Scanning + Copilot Autofix 심화 (4분)
+# 4.5 Code Scanning + Copilot Autofix 심화 (4분)
 
 ## Code Scanning (CodeQL) 동작 원리
 
@@ -148,7 +243,7 @@ Code Scanning이 취약점을 발견하면, **Copilot Autofix**가 자동으로 
 
 ---
 
-# 4.3 Secret Scanning + Push Protection 심화 (3분)
+# 4.6 Secret Scanning + Push Protection 심화 (3분)
 
 ## Secret Scanning 아키텍처
 
@@ -215,7 +310,7 @@ Organization Settings → Code security → Secret scanning
 
 ---
 
-# 4.4 Dependabot 자동화 파이프라인 구축 (3분)
+# 4.7 Dependabot 자동화 파이프라인 구축 (3분)
 
 ## Dependabot 3가지 기능
 
@@ -314,7 +409,7 @@ jobs:
 
 ---
 
-# 4.5 🔧 실습: 보안 자동화 파이프라인 구축 (5분)
+# 4.8 🔧 실습: 보안 자동화 파이프라인 구축 (5분)
 
 ## 실습 목표
 **GHAS 보안 도구를 활용한 CI/CD 보안 파이프라인 구축**
@@ -564,7 +659,7 @@ updates:
 
 ---
 
-# 4.6 Security Overview 대시보드 활용 (3분)
+# 4.9 Security Overview 대시보드 활용 (3분)
 
 ## 보안 관리자를 위한 Security Overview
 
