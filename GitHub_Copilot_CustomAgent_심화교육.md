@@ -721,75 +721,26 @@ tools:
 
 ## 🔧 현업 실습: 레거시 코드 현대화
 
-### Step 1: 의도적으로 레거시 스타일의 코드 작성
+### Step 1: 취약 코드 확인
 
-파일: `src/legacy-user-api.js`
-```javascript
-// 의도적으로 레거시 스타일로 작성된 코드
-var express = require('express');
-var router = express.Router();
-var mysql = require('mysql');
+파일: `src/vulnerable-sample.js` (GHAS 실습과 동일한 파일 활용)
 
-var db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'password123',
-  database: 'myapp'
-});
-
-router.get('/users', function(req, res) {
-  var query = "SELECT * FROM users WHERE name = '" + req.query.name + "'";
-  db.query(query, function(err, results) {
-    if (err) {
-      console.log(err);
-      res.status(500).send('Error');
-    }
-    res.json(results);
-  });
-});
-
-router.post('/users', function(req, res) {
-  var name = req.body.name;
-  var email = req.body.email;
-  var age = req.body.age;
-
-  if (name == '' || email == '') {
-    res.status(400).send('Bad request');
-    return;
-  }
-
-  var query = "INSERT INTO users (name, email, age) VALUES ('" + name + "', '" + email + "', " + age + ")";
-  db.query(query, function(err, result) {
-    if (err) {
-      console.log('error: ' + err);
-      res.status(500).send('Error');
-    }
-    res.json({id: result.insertId, name: name, email: email});
-  });
-});
-
-router.delete('/users/:id', function(req, res) {
-  db.query("DELETE FROM users WHERE id = " + req.params.id, function(err) {
-    if (err) console.log(err);
-    res.send('deleted');
-  });
-});
-
-module.exports = router;
-```
+이 파일에는 SQL Injection, XSS, Path Traversal, 하드코딩 비밀번호 등 다양한 보안 취약점과 레거시 패턴이 포함되어 있습니다.
 
 ### Step 2: Modernizer 에이전트로 현대화 실행
 
 ```
-@Modernizer src/legacy-user-api.js를 현대화해줘.
+@Modernizer src/vulnerable-sample.js를 현대화해줘.
 TypeScript로 전환하고, 보안 취약점도 모두 수정해줘.
 ```
 
 ### Step 3: 확인 포인트
 
 > ✅ 에이전트가 다음을 수행하는지 확인:
-> - `var` → `const/let`, `require` → `import` 변환
+> - `require` → `import` 변환
 > - SQL Injection 취약점 수정 (파라미터화 쿼리)
+> - XSS 취약점 수정 (출력 이스케이프)
+> - Path Traversal 수정 (경로 검증)
 > - 하드코딩된 비밀번호 제거 → 환경변수 사용
 > - 콜백 → async/await 변환
 > - TypeScript 타입 정의 추가
