@@ -18,6 +18,15 @@
 | [GitHub_Copilot_CustomAgent_심화교육.md](./GitHub_Copilot_CustomAgent_심화교육.md) | **Custom Agent 심화** — Sub-Agent 오케스트레이션, 현업 실습, 프롬프트 꿀팁 |
 | [GHAS_Copilot_보안심화교육.md](./GHAS_Copilot_보안심화교육.md) | **GHAS 보안 심화** — 보안 파이프라인 구축, Security Overview, Copilot Autofix |
 
+### 보안 파이프라인 실습 파일
+
+| 파일 | 설명 |
+|------|------|
+| [`.github/workflows/security-pipeline.yml`](./.github/workflows/security-pipeline.yml) | 🔐 보안 자동화 파이프라인 (CodeQL + Secret Scanning + Dependency Review + Report) |
+| [`.github/dependabot.yml`](./.github/dependabot.yml) | 📦 Dependabot 자동 업데이트 설정 (npm daily, github-actions weekly) |
+| [`src/vulnerable-sample.js`](./src/vulnerable-sample.js) | ⚠️ 의도적 취약 코드 (CodeQL 탐지 데모용) |
+| [`SECURITY.md`](./SECURITY.md) | 🛡️ 보안 정책 문서 |
+
 ## 🕐 교육 아젠다
 
 | 순서 | 주제 | 시간 | 자료 |
@@ -50,6 +59,34 @@
 - **Security Overview 대시보드** — 조직 전체 보안 현황 모니터링, 주간/월간 체크리스트
 - Copilot + GHAS 시너지 (End-to-End 보안 체계)
 
+## ✅ 보안 파이프라인 검증 결과
+
+이 리포지토리에 실제로 배포된 보안 파이프라인의 실행 결과입니다.
+
+### Pipeline Jobs
+
+| Job | 상태 | 설명 |
+|-----|------|------|
+| 🔍 Code Scanning (CodeQL) | ✅ 성공 | SARIF 결과 GitHub Security 탭에 업로드 완료 |
+| 🔑 Secret Scanning Check | ✅ 성공 | 시크릿 알림 없음 확인 |
+| 📦 Dependency Review | ⏭️ Skipped | push 이벤트에서는 건너뜀 (PR에서만 동작) |
+| 📊 Security Report | ✅ 성공 | 보안 요약 리포트 생성 |
+
+### CodeQL 탐지 알림
+
+`src/vulnerable-sample.js`에서 다음 취약점이 탐지되었습니다:
+
+| 취약점 | CWE | 심각도 |
+|--------|-----|--------|
+| **SQL Injection** (`js/sql-injection`) | CWE-89 | 🔴 High |
+| **Reflected XSS** (`js/reflected-xss`) | CWE-79 | 🔴 High |
+| **Missing Rate Limiting** ×2 (`js/missing-rate-limiting`) | CWE-770 | 🔴 High |
+
+> 🔗 [Security 탭에서 확인하기](https://github.com/Ai-Advanced/GitHub_and_Copilot/security)  
+> 🔗 [Actions 탭에서 파이프라인 확인하기](https://github.com/Ai-Advanced/GitHub_and_Copilot/actions)
+
+> ⚠️ **참고:** Code Scanning, Secret Scanning 등 GHAS 기능은 **Public 리포지토리**에서 무료로 사용할 수 있습니다. Private/Internal 리포에서는 GHAS 라이선스가 필요합니다.
+
 ## 🚀 빠른 시작
 
 ```bash
@@ -67,6 +104,8 @@ mkdir -p .github/agents
 | Custom Agents 공식 문서 | https://code.visualstudio.com/docs/copilot/customization/custom-agents |
 | Sub-Agents 공식 문서 | https://code.visualstudio.com/docs/copilot/agents/subagents |
 | GHAS 공식 문서 | https://docs.github.com/en/code-security |
+| CodeQL 쿼리 가이드 | https://codeql.github.com/docs |
+| Copilot Autofix 문서 | https://docs.github.com/en/code-security/code-scanning/copilot-autofix |
 | Awesome Copilot 예제 | https://github.com/github/awesome-copilot |
 
 ---
