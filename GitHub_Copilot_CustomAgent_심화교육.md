@@ -30,16 +30,13 @@
 │  Level 1: Custom Instructions (.github/copilot-instructions.md)  │
 │  └─ 프로젝트 전체에 자동 적용되는 규칙/스타일                      │
 │                                                             │
-│  Level 2: Prompt Files (.github/prompts/*.prompt.md)             │
-│  └─ 슬래시 커맨드로 호출하는 재사용 프롬프트                       │
-│                                                             │
-│  Level 3: Custom Agents (.github/agents/*.agent.md)              │
+│  Level 2: Custom Agents (.github/agents/*.agent.md)              │
 │  └─ 전용 도구와 역할을 가진 AI 페르소나                           │
 │                                                             │
-│  Level 4: Agent Skills (.github/skills/)                         │
+│  Level 3: Agent Skills (.github/skills/)                         │
 │  └─ 스크립트/리소스 포함, 이식 가능한 복합 능력                     │
 │                                                             │
-│  Level 5: MCP (Model Context Protocol)                           │
+│  Level 4: MCP (Model Context Protocol)                           │
 │  └─ 외부 시스템(DB, API, Slack 등) 연동                          │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
@@ -50,7 +47,6 @@
 | 요구사항 | 적합한 도구 |
 |----------|------------|
 | "TypeScript strict 모드로 코딩해줘" | Custom Instructions |
-| "API 엔드포인트 하나 만들어줘" | Prompt File |
 | "보안 전문가 관점에서 리뷰해줘" | **Custom Agent** |
 | "계획 → 구현 → 리뷰 순서로 진행해줘" | **Agent 오케스트레이션** |
 | "DB에서 스키마 가져와서 코드 생성해줘" | MCP + Agent |
