@@ -387,7 +387,8 @@ src/
 | GHAS 공식 문서 | https://docs.github.com/en/code-security |
 | VS Code Copilot 커스터마이징 | https://code.visualstudio.com/docs/copilot/customization |
 | GitHub Roadmap | https://github.com/github/roadmap |
-| Copilot Trust Center | https://resources.github.com/copilot-trust-center/ |
+| Copilot Trust Center | https://copilot.github.trust.page/ |
+| GHEC Trust Center | https://ghec.github.trust.page/ |
 
 ---
 
