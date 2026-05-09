@@ -225,6 +225,17 @@ applyTo: "**/*.tsx"
 
 # 📌 Part 4. GHE + GHAS 소개 (5분)
 
+> 이 파트의 상세 실습 및 보안 파이프라인 구축은 심화 문서를 참고하세요: **[GHAS_Copilot_보안심화교육.md](./GHAS_Copilot_보안심화교육.md)**
+>
+> | 섹션 | 내용 |
+> |------|------|
+> | 4.1 | GHAS 보안 파이프라인 전체 아키텍처 |
+> | 4.2 | Code Scanning + Copilot Autofix 심화 |
+> | 4.3 | Secret Scanning + Push Protection 심화 |
+> | 4.4 | Dependabot 자동화 파이프라인 구축 |
+> | 4.5 | 🔧 실습: 보안 자동화 파이프라인 구축 |
+> | 4.6 | Security Overview 대시보드 활용 (보안 관리자용) |
+
 ## 4.1 GitHub Enterprise (GHE) 개요
 
 GitHub Enterprise는 기업 환경에 최적화된 GitHub 플랫폼입니다.

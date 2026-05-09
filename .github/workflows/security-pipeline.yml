@@ -1,0 +1,147 @@
+name: "🔐 Security Pipeline"
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 9 * * 1'  # 매주 월요일 09:00 UTC
+
+jobs:
+  # ──────────────────────────────────────────
+  # Job 1: CodeQL 코드 스캐닝
+  # ──────────────────────────────────────────
+  code-scanning:
+    name: "🔍 Code Scanning (CodeQL)"
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ['javascript-typescript']
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-extended,security-and-quality
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"
+
+  # ──────────────────────────────────────────
+  # Job 2: Secret Scanning 알림 확인
+  # ──────────────────────────────────────────
+  secret-check:
+    name: "🔑 Secret Scanning Check"
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: read
+
+    steps:
+      - name: Check for open secret alerts
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            try {
+              const alerts = await github.rest.secretScanning.listAlertsForRepo({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: 'open'
+              });
+
+              if (alerts.data.length > 0) {
+                core.warning(`⚠️ ${alerts.data.length}개의 시크릿 스캐닝 알림이 있습니다.`);
+                alerts.data.forEach(alert => {
+                  core.warning(`  - ${alert.secret_type_display_name} (${alert.state})`);
+                });
+              } else {
+                core.info('✅ 시크릿 스캐닝 알림 없음');
+              }
+            } catch (error) {
+              core.info('ℹ️ Secret scanning API 접근 불가 (GHAS 라이선스 필요)');
+            }
+
+  # ──────────────────────────────────────────
+  # Job 3: 의존성 취약점 검토 (PR에서만)
+  # ──────────────────────────────────────────
+  dependency-review:
+    name: "📦 Dependency Review"
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+          comment-summary-in-pr: always
+
+  # ──────────────────────────────────────────
+  # Job 4: 보안 리포트 생성
+  # ──────────────────────────────────────────
+  security-report:
+    name: "📊 Security Report"
+    runs-on: ubuntu-latest
+    needs: [code-scanning, secret-check]
+    if: always()
+    permissions:
+      issues: write
+      pull-requests: write
+
+    steps:
+      - name: Generate Security Summary
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const codeScan = '${{ needs.code-scanning.result }}';
+            const secretCheck = '${{ needs.secret-check.result }}';
+
+            const statusIcon = (result) => {
+              if (result === 'success') return '✅ Pass';
+              if (result === 'skipped') return '⏭️ Skipped';
+              return '❌ Fail';
+            };
+
+            const summary = [
+              '## 🔐 Security Pipeline Report',
+              '',
+              '| 검사 항목 | 상태 |',
+              '|----------|------|',
+              `| Code Scanning (CodeQL) | ${statusIcon(codeScan)} |`,
+              `| Secret Scanning | ${statusIcon(secretCheck)} |`,
+              '',
+              `> 📅 실행 시간: ${new Date().toISOString()}`
+            ].join('\n');
+
+            if (context.eventName === 'pull_request') {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: summary
+              });
+            }
+            core.info(summary);

@@ -16,6 +16,7 @@
 |------|------|
 | [GitHub_Copilot_GHAS_교육자료.md](./GitHub_Copilot_GHAS_교육자료.md) | **메인 교육자료** — 전체 커리큘럼, Copilot 소개, Cursor 비교, GHE+GHAS |
 | [GitHub_Copilot_CustomAgent_심화교육.md](./GitHub_Copilot_CustomAgent_심화교육.md) | **Custom Agent 심화** — Sub-Agent 오케스트레이션, 현업 실습, 프롬프트 꿀팁 |
+| [GHAS_Copilot_보안심화교육.md](./GHAS_Copilot_보안심화교육.md) | **GHAS 보안 심화** — 보안 파이프라인 구축, Security Overview, Copilot Autofix |
 
 ## 🕐 교육 아젠다
 
@@ -40,10 +41,14 @@
 - **현업 시나리오 실습** — PR 자동 리뷰, 레거시 코드 현대화, 온보딩 가이드
 - **프롬프트 꿀팁** — "역할 부여 vs 방법론 학습" 원리, 5가지 실전 패턴
 
-### Part 4: GHE + GHAS
+### Part 4: GHE + GHAS (→ [보안 심화 문서](./GHAS_Copilot_보안심화교육.md))
 - GitHub Enterprise Cloud/Server 비교
 - GHAS 3대 기능: Code Scanning, Secret Scanning, Dependabot
-- Copilot + GHAS 시너지 (이중 보안 체계)
+- **Code Scanning + Copilot Autofix** — AI 자동 취약점 수정 (평균 수정 시간 3배 단축)
+- **Secret Scanning + Push Protection** — 시크릿 포함 커밋 push 차단
+- **보안 자동화 파이프라인 실습** — GitHub Actions 기반 CI/CD 보안 파이프라인 구축
+- **Security Overview 대시보드** — 조직 전체 보안 현황 모니터링, 주간/월간 체크리스트
+- Copilot + GHAS 시너지 (End-to-End 보안 체계)
 
 ## 🚀 빠른 시작
 
