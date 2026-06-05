@@ -23,6 +23,7 @@
 
 | 파일 | 설명 |
 |------|------|
+| [`[Fleet] 활용_Custom_Agent Demo-todo-app/`](./[Fleet]%20활용_Custom_Agent%20Demo-todo-app/) | 🚀 /Fleet 모드 & Custom Agent 테스트용 데모 프로젝트 (Todo 앱 + 가이드) |
 | [`.github/agents/`](./.github/agents/) | 🤖 Custom Agent 8종 (Planner, Researcher, Implementer, Reviewer, Orchestrator 등) |
 | [`.github/workflows/security-pipeline.yml`](./.github/workflows/security-pipeline.yml) | 🔐 보안 자동화 파이프라인 (CodeQL + Secret Scanning + Dependency Review) |
 | [`.github/dependabot.yml`](./.github/dependabot.yml) | 📦 Dependabot 자동 업데이트 설정 |

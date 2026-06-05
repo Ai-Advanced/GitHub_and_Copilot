@@ -1,0 +1,12 @@
+{
+  "name": "fleet-custom-agent-demo-todo-app",
+  "version": "1.0.0",
+  "description": "[/Fleet] 활용 Custom Agent 테스트용 간단한 Todo 앱",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node tests/todo.test.js"
+  },
+  "keywords": [],
+  "license": "MIT"
+}
