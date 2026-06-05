@@ -66,16 +66,25 @@ def calculate_fibonacci(n):
 
 | 플랜 | 가격 | 주요 특징 |
 |------|------|-----------|
-| **Free** | $0 | 제한된 완성/채팅 |
-| **Individual** | $10/월 | 무제한 완성, Chat, CLI |
+| **Free** | $0 | 제한된 코드 완성/채팅 |
+| **Pro** | $10/월 | 무제한 코드 완성/채팅, 타사 에이전트 엑세스(Claude, Codex) |
+| **Pro+** | $39/월 | Pro 대비 4배 더 많은 사용량, Opus를 포함한 프리미엄 모델 엑세스 |
+| **Max** | $100/월 | Pro+ 대비 2.9배 더 많은 사용량, 새로운 모델 및 기능 우선 이용 권한 |
 | **Business** | $19/월/사용자 | 조직 관리, 감사 로그, IP 면책 |
-| **Enterprise** | $39/월/사용자 | Knowledge Base, 모델 파인튜닝, SSO |
-
-> 💡 **2026년 6월부터** Business/Enterprise에 **AI Credits 기반 사용량 과금** 도입 예정
+| **Enterprise** | $39/월/사용자 | 새로운 모델 및 기능 우선 이용 권한, 관리 대시보드, SSO |
 
 ---
 
 # 📌 Part 2. Copilot vs Cursor 비교 분석 (5분)
+
+### 2 코드 완성 (Autocomplete)
+
+| 기능 | GitHub Copilot | Cursor | ChatGPT/Codex | Gemini Code Assist | Claude Code |
+|------|---------------|--------|---------------|-------------------|-------------|
+| 인라인 완성 | ✅ | ✅ | ✅ (IDE 플러그인) | ✅ | ✅ (IDE 플러그인) |
+| 멀티라인 완성 | ✅ | ✅ | ✅ | ✅ | ✅ |
+| AI 네이티브 Tab 예측 | ✅ | ✅ ⭐ | ❌ | ❌ | ❌ |
+| 프로젝트 컨텍스트 인식 | **전체 리포** | **전체 리포** ⭐ | 샌드박스 내 | Google Cloud 연동 | **전체 리포** ⭐ |
 
 ## 2.1 핵심 차이점
 
@@ -87,7 +96,6 @@ def calculate_fibonacci(n):
 | **코드 완성** | 인라인, 멀티라인 | 인라인, 멀티라인, AI 네이티브 컨텍스트 |
 | **멀티파일 편집** | 기본 수준 (점진적 개선 중) | ⭐ 강력 (Composer로 프로젝트 전체 편집) |
 | **Agent Mode** | Preview → GA (Issue→PR 자동화) | ⭐ 성숙 (코드 실행, 브라우저 제어 포함) |
-| **모델 선택** | GPT-4o, Claude, Gemini | GPT-5.2, Claude Opus, Gemini, Grok |
 | **GitHub 연동** | ⭐ 네이티브 통합 (Issue, PR, Actions) | 제한적 |
 | **엔터프라이즈** | ⭐ 감사 로그, SSO, IP 면책, 정책 제어 | 기본 팀 기능 |
 | **커스터마이징** | copilot-instructions.md, Custom Agent | .cursorrules |
