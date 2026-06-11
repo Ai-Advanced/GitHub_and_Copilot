@@ -41,6 +41,41 @@ app.get('/file', (req, res) => {
   res.sendFile('/uploads/' + filename);
 });
 
+// CWE-78: OS Command Injection 취약점
+const { exec } = require('child_process');
+app.get('/ping', (req, res) => {
+  const host = req.query.host;
+  exec('ping -c 4 ' + host, (err, stdout) => {
+    res.send(stdout);
+  });
+});
+
+// CWE-327: 취약한 암호화 알고리즘 사용
+const crypto = require('crypto');
+app.get('/hash', (req, res) => {
+  const data = req.query.data;
+  const hash = crypto.createHash('md5').update(data).digest('hex');
+  res.json({ hash });
+});
+
+// CWE-918: Server-Side Request Forgery (SSRF)
+const http = require('http');
+app.get('/fetch', (req, res) => {
+  const url = req.query.url;
+  http.get(url, (response) => {
+    let data = '';
+    response.on('data', chunk => data += chunk);
+    response.on('end', () => res.send(data));
+  });
+});
+
+// CWE-502: Insecure Deserialization
+app.post('/deserialize', (req, res) => {
+  const serialized = req.body.data;
+  const obj = eval('(' + serialized + ')');
+  res.json(obj);
+});
+
 app.listen(3000, () => {
   console.log('Server running on port 3000');
 });
