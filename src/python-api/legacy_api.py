@@ -305,6 +305,62 @@ def debug_env():
     return jsonify(dict(os.environ))
 
 
+# ========== 추가 취약점 (GHAS 탐지 테스트용) ==========
+
+@app.route("/api/admin/exec", methods=["POST"])
+def execute_command():
+    """CWE-78: OS Command Injection — 사용자 입력으로 시스템 명령 실행"""
+    data = request.get_json()
+    cmd = data.get("command", "")
+    result = os.popen(cmd).read()
+    return jsonify({"output": result})
+
+
+@app.route("/api/export", methods=["GET"])
+def export_data():
+    """CWE-78: OS Command Injection — 쿼리 파라미터로 명령어 주입"""
+    fmt = request.args.get("format", "csv")
+    filename = request.args.get("filename", "export")
+    os.system(f"python export_tool.py --format {fmt} --output /tmp/{filename}")
+    return jsonify({"status": "exported", "filename": filename})
+
+
+@app.route("/api/render", methods=["POST"])
+def render_template():
+    """CWE-94: Server-Side Template Injection (SSTI)"""
+    data = request.get_json()
+    template = data.get("template", "")
+    return render_template_string(template)
+
+
+@app.route("/api/deserialize", methods=["POST"])
+def deserialize_data():
+    """CWE-502: Insecure Deserialization — pickle 사용"""
+    import pickle
+    import base64
+    data = request.get_json()
+    payload = base64.b64decode(data.get("payload", ""))
+    obj = pickle.loads(payload)
+    return jsonify({"result": str(obj)})
+
+
+@app.route("/api/redirect", methods=["GET"])
+def open_redirect():
+    """CWE-601: Open Redirect — URL 검증 없이 리다이렉트"""
+    from flask import redirect
+    url = request.args.get("url", "/")
+    return redirect(url)
+
+
+@app.route("/api/ssrf", methods=["GET"])
+def fetch_url():
+    """CWE-918: SSRF — 사용자 입력 URL로 서버측 요청"""
+    import urllib.request
+    url = request.args.get("url", "")
+    response = urllib.request.urlopen(url)
+    return response.read()
+
+
 # ========== 앱 시작 ==========
 
 if __name__ == "__main__":
